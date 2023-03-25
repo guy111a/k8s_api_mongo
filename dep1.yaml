@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: db-access-api
+    labels: 
+      name: db-access-api
+      role: api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: api-pod
+  templates:
+    metadata:
+      labels:
+        name: api-pod
+        tier: frontend
+    spec:
+      containers:
+      - name: my-api-pod
+        image: guy1a/image:
+        imagePullPolicy: Always
+        ports:
+          - containersPort: 6666
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+  labels:
+    name: web-service
+    tier: frontend
+spec:
+  type: NodePort
+  ports:
+    - targetPort: 6666
+      port: 6666
+  selector:
+        name: my-api-pod
+        tier: frontend
+
